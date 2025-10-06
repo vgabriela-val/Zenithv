@@ -47,3 +47,17 @@ startBtn.addEventListener("click", startTimer);
 resetBtn.addEventListener("click", resetTimer);
 
 updateDisplay();
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && isRunning) {
+    clearInterval(timer);
+    isRunning = false;
+    points -= 5;
+    if (points < 0) points = 0;
+    pointsDisplay.textContent = points;
+    yourPointsDisplay.textContent = points;
+    alert("⚠️ Te distraíste... perdiste 5 puntos.");
+    updateDisplay();
+  }
+});
+

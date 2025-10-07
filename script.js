@@ -6,16 +6,12 @@ let isRunning = false;
 let username = "";
 let users = JSON.parse(localStorage.getItem("zenithv_users")) || [];
 
-// Usuarios fijos
-if (!users.some(u => u.name === "Luna")) users.push({ name: "Luna", points: 120 });
-if (!users.some(u => u.name === "Joaquin")) users.push({ name: "Joaquin", points: 95 });
-saveUsers();
-
 // Mostrar pantalla de nombre
 const namePrompt = document.getElementById("namePrompt");
 const startAppBtn = document.getElementById("startApp");
 const usernameInput = document.getElementById("usernameInput");
 
+// Al hacer clic en "Comenzar"
 startAppBtn.addEventListener("click", () => {
   username = usernameInput.value.trim();
   if (username === "") {
@@ -28,13 +24,20 @@ startAppBtn.addEventListener("click", () => {
   renderRanking();
 });
 
+// Botones principales
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const timeDisplay = document.getElementById("time");
 const pointsDisplay = document.getElementById("points");
 const rankingList = document.getElementById("rankingList");
 
+// Inicializa usuario
 function initUser(name) {
+  if (!users.some((u) => u.name === "Luna"))
+    users.push({ name: "Luna", points: 120 });
+  if (!users.some((u) => u.name === "Joaquin"))
+    users.push({ name: "Joaquin", points: 95 });
+
   const existing = users.find((u) => u.name === name);
   if (!existing) {
     users.push({ name, points: 0 });
@@ -44,10 +47,12 @@ function initUser(name) {
   pointsDisplay.textContent = points;
 }
 
+// Guarda usuarios en localStorage
 function saveUsers() {
   localStorage.setItem("zenithv_users", JSON.stringify(users));
 }
 
+// Iniciar / pausar temporizador
 startBtn.addEventListener("click", () => {
   if (isRunning) {
     clearInterval(timer);
@@ -59,6 +64,7 @@ startBtn.addEventListener("click", () => {
   isRunning = !isRunning;
 });
 
+// Reiniciar
 resetBtn.addEventListener("click", resetTimer);
 
 function startTimer() {
@@ -89,19 +95,22 @@ function updateDisplay() {
     .padStart(2, "0")}`;
 }
 
-// 🎵 Sesión completada
+// Cuando termina un pomodoro
 function completePomodoro() {
   points += 10;
   const user = users.find((u) => u.name === username);
   if (user) user.points = points;
   saveUsers();
   renderRanking();
+
   playRewardSound();
   if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+
   alert("🎉 ¡Sesión completada! +10 puntos 🌟");
   resetTimer();
 }
 
+// 🔔 Sonido y vibración al completar sesión
 function playRewardSound() {
   const audio = new Audio(
     "https://cdn.pixabay.com/download/audio/2021/08/09/audio_2b52d5d9c2.mp3?filename=success-fanfare-trumpets-6185.mp3"
@@ -110,7 +119,7 @@ function playRewardSound() {
   audio.play();
 }
 
-// ⚠️ Penalización
+// 🔊 Sonido y vibración por distracción
 function playPenaltySound() {
   const audio = new Audio(
     "https://cdn.pixabay.com/download/audio/2022/03/15/audio_9e0a8f2a61.mp3?filename=error-126627.mp3"
@@ -119,6 +128,7 @@ function playPenaltySound() {
   audio.play();
 }
 
+// Detectar distracciones
 document.addEventListener("visibilitychange", () => {
   if (document.hidden && isRunning) {
     points = Math.max(0, points - 5);
@@ -126,16 +136,32 @@ document.addEventListener("visibilitychange", () => {
     if (user) user.points = points;
     saveUsers();
     renderRanking();
+
     playPenaltySound();
     if (navigator.vibrate) navigator.vibrate(200);
-    alert("⚠️ ¡Te distrajiste! -5 puntos");
-    clearInterval(timer);
-    isRunning = false;
-    startBtn.textContent = "Iniciar";
+
+    alert("⚠️ ¡Ups! Te distrajiste y perdiste 5 puntos");
   }
 });
 
-// 🏆 Mostrar ranking (con botones solo para Valery)
+// 🗑️ Eliminar usuario
+function deleteUser(name) {
+  users = users.filter((u) => u.name.toLowerCase() !== name.toLowerCase());
+  saveUsers();
+  renderRanking();
+  showDeleteNotification(name);
+}
+
+// 🔔 Notificación flotante al borrar
+function showDeleteNotification(name) {
+  const notif = document.createElement("div");
+  notif.className = "delete-notif";
+  notif.textContent = `🗑️ Jugador ${name} eliminado`;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 2000);
+}
+
+// Mostrar ranking
 function renderRanking() {
   users.sort((a, b) => b.points - a.points);
   rankingList.innerHTML = "";
@@ -144,29 +170,21 @@ function renderRanking() {
     const li = document.createElement("li");
     li.innerHTML = `${u.name === username ? "🔥 " : ""}${u.name} — ${u.points} pts`;
 
-    // Si Valery está logueada, mostrar botón eliminar
-    if (username === "Valery" && u.name !== "Valery") {
+    // Mostrar botón solo si tú eres Valery
+    if (username.toLowerCase() === "valery" && u.name.toLowerCase() !== "valery") {
       const delBtn = document.createElement("button");
-      delBtn.textContent = "🗑️";
-      delBtn.style.marginLeft = "10px";
-      delBtn.style.background = "transparent";
-      delBtn.style.border = "none";
-      delBtn.style.cursor = "pointer";
-      delBtn.style.fontSize = "16px";
-
-      delBtn.addEventListener("click", () => {
-        if (confirm(`¿Eliminar a ${u.name} del ranking?`)) {
-          users = users.filter((user) => user.name !== u.name);
-          saveUsers();
-          renderRanking();
-          playPenaltySound();
-          if (navigator.vibrate) navigator.vibrate(150);
-          alert(`🗑️ Jugador "${u.name}" eliminado.`);
+      delBtn.textContent = "❌";
+      delBtn.className = "deleteBtn";
+      delBtn.onclick = () => {
+        if (confirm(`¿Seguro que quieres borrar a ${u.name}?`)) {
+          deleteUser(u.name);
         }
-      });
+      };
       li.appendChild(delBtn);
     }
 
     rankingList.appendChild(li);
   });
+
+  pointsDisplay.textContent = points;
 }

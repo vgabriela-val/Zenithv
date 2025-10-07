@@ -1,4 +1,6 @@
-// Variables principales
+// ==========================
+// 🎯 VARIABLES PRINCIPALES
+// ==========================
 let timeLeft = 25 * 60; // 25 minutos
 let timer;
 let points = 0;
@@ -6,12 +8,13 @@ let isRunning = false;
 let username = "";
 let users = JSON.parse(localStorage.getItem("zenithv_users")) || [];
 
-// Mostrar pantalla de nombre
+// ==========================
+// 🧍 INICIO Y NOMBRE
+// ==========================
 const namePrompt = document.getElementById("namePrompt");
 const startAppBtn = document.getElementById("startApp");
 const usernameInput = document.getElementById("usernameInput");
 
-// Al hacer clic en "Comenzar"
 startAppBtn.addEventListener("click", () => {
   username = usernameInput.value.trim();
   if (username === "") {
@@ -20,34 +23,60 @@ startAppBtn.addEventListener("click", () => {
   }
   namePrompt.style.display = "none";
   document.querySelector(".app").style.display = "block";
+  initBaseUsers();
   initUser(username);
   renderRanking();
 });
 
-// Botones principales
+// ==========================
+// 🕒 BOTONES PRINCIPALES
+// ==========================
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const timeDisplay = document.getElementById("time");
 const pointsDisplay = document.getElementById("points");
 const rankingList = document.getElementById("rankingList");
 
-// Inicializa usuario
+// ==========================
+// 👥 USUARIOS BASE
+// ==========================
+function initBaseUsers() {
+  const baseUsers = [
+    { name: "Luna", points: 120 },
+    { name: "Joaquin", points: 95 },
+  ];
+
+  baseUsers.forEach((baseUser) => {
+    const exists = users.find((u) => u.name === baseUser.name);
+    if (!exists) users.push(baseUser);
+  });
+  saveUsers();
+}
+
+// ==========================
+// 👤 INICIALIZAR USUARIO
+// ==========================
 function initUser(name) {
-  const existing = users.find((u) => u.name === name);
-  if (!existing) {
-    users.push({ name, points: 0 });
+  let user = users.find((u) => u.name === name);
+  if (!user) {
+    user = { name, points: 0 };
+    users.push(user);
     saveUsers();
   }
-  points = users.find((u) => u.name === name).points;
+  points = user.points;
   pointsDisplay.textContent = points;
 }
 
-// Guarda usuarios en localStorage
+// ==========================
+// 💾 GUARDAR USUARIOS
+// ==========================
 function saveUsers() {
   localStorage.setItem("zenithv_users", JSON.stringify(users));
 }
 
-// Iniciar / pausar temporizador
+// ==========================
+// ⏱️ TEMPORIZADOR
+// ==========================
 startBtn.addEventListener("click", () => {
   if (isRunning) {
     clearInterval(timer);
@@ -59,7 +88,6 @@ startBtn.addEventListener("click", () => {
   isRunning = !isRunning;
 });
 
-// Reiniciar
 resetBtn.addEventListener("click", resetTimer);
 
 function startTimer() {
@@ -89,7 +117,10 @@ function updateDisplay() {
     .toString()
     .padStart(2, "0")}`;
 }
-// Cuando termina un pomodoro
+
+// ==========================
+// 🎉 CUANDO TERMINA UN POMODORO
+// ==========================
 function completePomodoro() {
   points += 10;
   const user = users.find((u) => u.name === username);
@@ -97,7 +128,6 @@ function completePomodoro() {
   saveUsers();
   renderRanking();
 
-  // 🎶 sonido de victoria + 📳 vibración
   playRewardSound();
   if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
 
@@ -105,7 +135,7 @@ function completePomodoro() {
   resetTimer();
 }
 
-// 🔔 Sonido y vibración cuando termina una sesión correctamente
+// 🎵 SONIDO DE RECOMPENSA
 function playRewardSound() {
   const audio = new Audio(
     "https://cdn.pixabay.com/download/audio/2021/08/09/audio_2b52d5d9c2.mp3?filename=success-fanfare-trumpets-6185.mp3"
@@ -114,8 +144,9 @@ function playRewardSound() {
   audio.play();
 }
 
-
-// Mostrar ranking
+// ==========================
+// 🏆 MOSTRAR RANKING
+// ==========================
 function renderRanking() {
   users.sort((a, b) => b.points - a.points);
   rankingList.innerHTML = "";
@@ -124,28 +155,12 @@ function renderRanking() {
     li.innerHTML = `${u.name === username ? "🔥 " : ""}${u.name} — ${u.points} pts`;
     rankingList.appendChild(li);
   });
-}
-// Detectar distracciones (cuando el usuario cambia de pestaña)
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden && isRunning) {
-    // Si está estudiando y cambia de pestaña → pierde puntos
-    points = Math.max(0, points - 5);
-    const user = users.find((u) => u.name === username);
-    if (user) user.points = points;
-    saveUsers();
-    renderRanking();
-    alert("⚠️ ¡Parece que te distrajiste! -5 puntos");
-  }
-});
-// 🔊 Sonido y vibración cuando el usuario se distrae
-function playPenaltySound() {
-  const audio = new Audio(
-    "https://cdn.pixabay.com/download/audio/2022/03/15/audio_9e0a8f2a61.mp3?filename=error-126627.mp3"
-  );
-  audio.volume = 0.5;
-  audio.play();
+  pointsDisplay.textContent = points;
 }
 
+// ==========================
+// ⚠️ DETECTAR DISTRACCIÓN
+// ==========================
 document.addEventListener("visibilitychange", () => {
   if (document.hidden && isRunning) {
     points = Math.max(0, points - 5);
@@ -154,9 +169,18 @@ document.addEventListener("visibilitychange", () => {
     saveUsers();
     renderRanking();
 
-    // 🔊 sonido + 📳 vibración + alerta
     playPenaltySound();
     if (navigator.vibrate) navigator.vibrate(300);
     alert("⚠️ ¡Ups! Te distrajiste y perdiste 5 puntos");
   }
 });
+
+// 🔊 SONIDO DE PENALIZACIÓN (más corto)
+function playPenaltySound() {
+  const audio = new Audio(
+    "https://cdn.pixabay.com/download/audio/2022/03/15/audio_fdc9c6f7b1.mp3?filename=error-short-beep-125111.mp3"
+  );
+  audio.volume = 0.5;
+  audio.play();
+}
+

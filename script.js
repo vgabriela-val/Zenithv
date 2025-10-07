@@ -170,4 +170,3 @@ function renderRanking() {
     rankingList.appendChild(li);
   });
 }
-

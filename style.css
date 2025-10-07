@@ -1,139 +1,174 @@
-/* 🌸 Estilo general */
+/* 🌸 ZenithV — versión coquette con transparencia elegante 🌸 */
 body {
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #f8c8dc, #d6b4fc);
-  color: #5b2c6f;
+  background: linear-gradient(135deg, #1a1a40, #4e148c);
+  color: #fff;
+  text-align: center;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
 }
 
-/* 🩷 Contenedor principal */
+/* Caja principal */
 .app {
-  display: none;
-  background: #fff;
-  padding: 25px 35px;
-  border-radius: 25px;
-  box-shadow: 0 8px 25px rgba(155, 89, 182, 0.25);
-  text-align: center;
-  max-width: 380px;
-  width: 90%;
-  animation: fadeIn 0.6s ease-in-out;
-}
-
-/* ✨ Animación */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 💜 Pantalla de nombre */
-#namePrompt {
-  background: #fff;
-  padding: 25px 35px;
-  border-radius: 25px;
-  box-shadow: 0 8px 25px rgba(155, 89, 182, 0.25);
-  text-align: center;
-  max-width: 380px;
-  width: 90%;
-}
-
-#usernameInput {
-  padding: 10px 15px;
-  border-radius: 15px;
-  border: 2px solid #e0b3ff;
-  outline: none;
-  width: 100%;
-  margin-bottom: 15px;
-  font-size: 16px;
-  text-align: center;
-  color: #5b2c6f;
-}
-
-#usernameInput:focus {
-  border-color: #ba68c8;
-}
-
-/* 🌷 Botones principales */
-button {
-  background: linear-gradient(135deg, #d48efc, #f7a8e8);
-  border: none;
-  color: white;
-  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
   border-radius: 20px;
-  font-size: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  max-width: 400px;
+  width: 90%;
+  backdrop-filter: blur(6px);
+}
+
+/* Título principal */
+h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #ffb7e9, #caa4f8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(255, 182, 255, 0.4);
+}
+
+/* Subtítulo */
+.subtitle {
+  font-size: 0.9rem;
+  color: #e2d0ff;
+  margin-bottom: 20px;
+}
+
+/* Temporizador */
+.timer h2 {
+  font-size: 3rem;
+  margin: 15px 0;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 150, 255, 0.3);
+}
+
+/* Botones */
+button {
+  background: linear-gradient(135deg, #ff6ec7, #b57aff);
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(186, 104, 200, 0.4);
+  transition: all 0.3s;
+  box-shadow: 0 3px 10px rgba(183, 100, 255, 0.4);
 }
 
 button:hover {
+  background: linear-gradient(135deg, #ff3fbf, #a864ff);
   transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(186, 104, 200, 0.5);
 }
 
-/* 💗 Texto y tiempo */
-#time {
-  font-size: 60px;
-  margin: 20px 0;
-  color: #7b1fa2;
-  font-weight: 600;
+/* Ranking y puntos */
+.score,
+.ranking {
+  margin-top: 20px;
 }
 
-#points {
-  font-size: 22px;
-  color: #ab47bc;
-  font-weight: bold;
+.ranking h3 {
+  color: #ffb7e9;
 }
 
-/* 🌸 Ranking */
-#rankingList {
+.ranking ul {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
-  text-align: left;
 }
 
-#rankingList li {
-  background: rgba(250, 232, 255, 0.8);
-  margin: 8px 0;
-  padding: 10px 15px;
-  border-radius: 15px;
+.ranking li {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  margin: 5px 0;
+  padding: 6px;
+  color: #ffeaff;
+  box-shadow: 0 2px 6px rgba(255, 150, 255, 0.2);
+}
+
+/* 🌙 Pantalla inicial (transparente, elegante y coquette) */
+.name-prompt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 5, 30, 0.8);
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  color: #6a1b9a;
-  font-weight: 500;
-}
-
-/* 🔮 Botón eliminar */
-.deleteBtn {
-  background: linear-gradient(135deg, #f48fb1, #ce93d8);
-  border: none;
+  backdrop-filter: blur(10px);
   color: white;
-  border-radius: 15px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: 0.2s;
+  z-index: 9999;
 }
 
-.deleteBtn:hover {
-  background: linear-gradient(135deg, #ec407a, #ba68c8);
-}
-
-/* 💕 Estilo de encabezados */
-h1, h2, h3 {
-  color: #6a1b9a;
+.name-prompt h2 {
+  font-size: 1.8rem;
   margin-bottom: 10px;
+  background: linear-gradient(135deg, #ffb7e9, #d6b4fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 8px rgba(255, 180, 255, 0.4);
 }
+
+.name-prompt p {
+  font-size: 1rem;
+  color: #ddd;
+}
+
+.name-prompt input {
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 10px;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  width: 70%;
+}
+
+.name-prompt input::placeholder {
+  color: #ccc;
+}
+
+.name-prompt button {
+  padding: 10px 25px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #ff6ec7, #b57aff);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+  box-shadow: 0 3px 10px rgba(183, 100, 255, 0.4);
+}
+
+.name-prompt button:hover {
+  background: linear-gradient(135deg, #ff3fbf, #a864ff);
+  transform: scale(1.05);
+}
+
+/* Botón de eliminar (solo visible para Valery) */
+.delete-btn {
+  background: #ffb7e9;
+  color: #4b007d;
+  border: 1px solid #ffb7e9;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  backg
